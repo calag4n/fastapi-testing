@@ -4,7 +4,8 @@ from fastapi.testclient import TestClient
 
 client = TestClient(app)
 """
-I would like to POST and GET data from a db named 'TEST_DB' not from the 'PROD_DB' initialized in api/controllers/connect.py .
+I would like to POST and GET data from a db named 'TEST_DB' not from the 'PROD_DB' initialized in `api/controllers/connect.py` .
+Her, even on the prod DB, the `client.post()` method doesn't work, I don't know why.
 I tried a different approach (based on FastAPI's Dependencie Injection) visible on the 'anotherWay' branch.
 """
 
