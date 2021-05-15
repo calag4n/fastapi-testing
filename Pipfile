@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = "*"
+email-validator = "*"
+python-multipart = "*"
+python-jose = "*"
+cryptography = "<3.4"
+passlib = "*"
+bcrypt = "*"
+requests = "*"
+python-dotenv = "*"
+motor = "*"
+
+[dev-packages]
+mypy = "*"
+mypyls = {extras = ["default-mypy"], file = "https://github.com/matangover/mypyls/archive/master.zip"}
+pytest = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+server = "python main.py"
