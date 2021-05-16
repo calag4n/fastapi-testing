@@ -1,3 +1,6 @@
-.vscode
+venv/
+.vscode/
+.vim/
 .pytest_cache
+mongo_db/
 __pycache__/

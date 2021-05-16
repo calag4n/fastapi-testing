@@ -26,4 +26,5 @@ async def create_user(user_in: User):
 @router.get("/", response_model=List[User])
 async def list_users():
     users = await get_users()
+    print(users)
     return users

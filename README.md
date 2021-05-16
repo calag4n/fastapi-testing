@@ -1,7 +1,13 @@
 # Start server
 
+In production
 ```sh
-python main.py
+./run.sh
+```
+
+Run tests
+```sh
+./run-tests.sh
 ```
 
 # Flow

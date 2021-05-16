@@ -1,7 +1,12 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-MONGO_URI = "mongodb://localhost:27017"
+import settings
 
-client = AsyncIOMotorClient(MONGO_URI, uuidRepresentation="standard")
 
-db = client["PROD_DB"]
+client = AsyncIOMotorClient(
+    settings.MONGO_HOST,
+    settings.MONGO_PORT,
+    uuidRepresentation="standard",
+)
+
+db = client[settings.MONGO_DB]

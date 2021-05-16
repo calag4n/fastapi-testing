@@ -4,13 +4,14 @@ from api.models.User import User
 
 from .connect import db
 
-users_collection = db.get_collection("users")
+users_collection = db['users']
 
 
 async def get_users():
     users = []
     async for user in users_collection.find():
-        users.append(user)
+        users.append(User(**user))
+
     return users
 
 
