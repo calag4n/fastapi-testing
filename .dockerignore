@@ -1,0 +1,9 @@
+Docker
+README.md
+.gitignore
+.git/
+.vim/
+venv/
+.mypy_cache/
+.pytest_cache/
+__pycache__/

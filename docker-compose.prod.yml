@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+
+    restart: on-failure
+    stop_signal: SIGINT
+
+    ports:
+      - 8000:8000
+
+    depends_on:
+      - mongo
+
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - APP_RELOAD=1
+      - MONGO_HOST=mongo
+      - MONGO_PORT=27017
+      - MONGO_DB=PROD
+
+  mongo:
+    image: mongo:4.2-bionic
+
+    volumes:
+      - ./mongo_db:/data/db  # To make mongo persistent
