@@ -14,3 +14,10 @@ run-tests:
 MONGO_PORT=27017 \
 MONGO_DB=TEST \
 	pipenv run pytest . $1
+
+run-docker:
+	docker-compose -f docker-compose.prod.yml up
+
+run-docker-tests:
+	docker-compose -f docker-compose.tests.yml up
+

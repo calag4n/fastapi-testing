@@ -19,7 +19,9 @@ async def create_user(user_create: UserCreate) -> UserDict:
     user = User(**user_create.dict())
 
     result = await collection.insert_one(user.dict())
-    user_dict = await collection.find_one({'_id': result.inserted_id})
+    user_dict = await collection.find_one(
+        {'_id': result.inserted_id}
+    )
 
     return user_dict
 

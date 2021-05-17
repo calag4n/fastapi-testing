@@ -1,7 +1,11 @@
 from uuid import UUID
 from typing import List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter
+from fastapi import FastAPI
+from fastapi import Request
+from fastapi import status
+from fastapi.responses import JSONResponse
 
 from app.models import Response
 from app.models import ResponseDict
@@ -16,9 +20,13 @@ router = APIRouter(prefix='/users', tags=["users"])
 
 
 class UsersException(Exception):
-    def __init__(self, status_code: int, message: str = 'No message') -> None:
+    def __init__(
+        self,
+        status_code: int,
+        error_message: str = 'No message',
+    ) -> None:
         self.status_code = status_code
-        self.message = message
+        self.error_message = error_message
 
 
 @router.post("/",
@@ -129,3 +137,17 @@ async def delete_user(user_id: UUID) -> ResponseDict:
         return {
             'error': 'User has not been updated'
         }
+
+
+async def users_exception_handler(_: Request, exc: UsersException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            'error': exc.error_message,
+        },
+    )
+
+
+def setup(app: FastAPI) -> None:
+    app.include_router(router)
+    app.add_exception_handler(UsersException, users_exception_handler)
