@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-import settings
+from app import settings
 
 
 client = AsyncIOMotorClient(

@@ -1,64 +1,124 @@
+import logging
 import pytest
+import uuid
 import copy
-from fastapi.testclient import TestClient
 
-from api.app import app
-from api.controllers.users import users_collection
+from httpx import AsyncClient
 
-"""
-I would like to POST and GET data from a db named 'TEST_DB' not from the 'PROD_DB' initialized in `api/controllers/connect.py` .
-Her, even on the prod DB, the `client.post()` method doesn't work, I don't know why,
-I tried a different approach (based on FastAPI's Dependencie Injection) visible on the 'anotherWay' branch.
-"""
+from app.controllers.users import collection as users_collection
 
-new_user = {
-    "email": "user@example.com",
-    "password": "some_password"
-}
-
-users = [
-    {
-        "email": "admin@soup.com",
-        "password": "password",
-    },
-    {
-        "email": "three@point.com",
-        "password": "secrets",
-    },
-    {
-        "email": "xanarchy@lil.com",
-        "password": "treesap",
-    },
-]
+log = logging.getLogger('test logger')
 
 
-@pytest.fixture
-def client():
-    with TestClient(app) as client:
-        yield client
+@pytest.fixture(scope='function')
+async def drop_users_collection():
+    yield
+
+    await users_collection.delete_many({})
+
+    exinsting_users: int = 0
+
+    async for _ in users_collection.find():
+        exinsting_users += 1
+
+    assert 0 == exinsting_users
 
 
-@pytest.fixture
-def loop(client: TestClient):
-    yield client.task.get_loop()
+@pytest.fixture(scope='function')
+async def users():
+    def get_uuid_as_str():
+        return str(uuid.uuid4())
+
+    user_dicts = [
+        {
+            'id': get_uuid_as_str(),
+            'email': 'admin@soup.com',
+            'password': 'password',
+        },
+        {
+            'id': get_uuid_as_str(),
+            'email': 'three@point.com',
+            'password': 'secrets', },
+        {
+            'id': get_uuid_as_str(),
+            'email': 'xanarchy@lil.com',
+            'password': 'treesap',
+        }
+    ]
+
+    result = await users_collection.insert_many(copy.deepcopy(user_dicts))
+
+    assert len(result.inserted_ids) == len(user_dicts)
+
+    yield copy.deepcopy(user_dicts)
+
+    await users_collection.delete_many({})
+
+    exinsting_users: int = 0
+
+    async for _ in users_collection.find():
+        exinsting_users += 1
+
+    assert 0 == exinsting_users
 
 
-def test_create_user(client):
-    # The trailing slash in necessary, check the link
-    # https://github.com/tiangolo/fastapi/issues/2060
-    response = client.post('/users/', json=new_user)
-    assert response.status_code == 201
-    assert response.json() == new_user
+
+# @pytest.mark.usefixtures('drop_users_collection')
+# @pytest.mark.asyncio
+# async def test_create_user(client: AsyncClient):
+#     new_user = {
+#         'email': 'my@superemail.org',
+#         'password': 'dvorak',
+#     }
+
+#     response = await client.post('/users/', json=new_user)
+#     response_dict = response.json()
+
+#     created_user = response_dict['result']
+
+#     assert uuid.UUID(created_user['id'])
+
+#     del created_user['id']
+
+#     assert response_dict['result'] == new_user
+
+#     with pytest.raises(KeyError):
+#         response_dict['error']
 
 
+# @pytest.mark.asyncio # async def test_read_users(client: AsyncClient, users: list):
+#     response = await client.get('/users/')
+#     response_dict = response.json()
 
-async def prepare_test_list_users():
-    await users_collection.drop()
-    await users_collection.insert_many(copy.deepcopy(users))
+#     existing_users = response_dict['result']
+
+#     def sorted_user_list(user_list: list):
+#         return sorted(user_list, key=lambda user_dict: user_dict['id'])
+
+#     assert sorted_user_list(users) == sorted_user_list(existing_users)
+
+#     with pytest.raises(KeyError):
+#         response_dict['error']
 
 
-def test_list_users(client, loop):
-    loop.run_until_complete(prepare_test_list_users())
-    response = client.get("/users/")
-    assert response.status_code == 200
-    assert response.json() == users
+@pytest.mark.asyncio
+async def test_read_user(client: AsyncClient, users: list):
+    exinsting_users: int = 0
+
+    async for _ in users_collection.find():
+        exinsting_users += 1
+
+    assert exinsting_users
+
+    for user in users:
+        user_id = user['id']
+        path = f'/users/{user_id}'
+        response = await client.get(path)
+        response_dict = response.json()
+        raise AssertionError(response_dict['error'])
+        existing_user = response_dict['result']
+
+        assert user == existing_user
+
+        with pytest.raises(KeyError):
+            response_dict['error']

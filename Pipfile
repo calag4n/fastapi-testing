@@ -15,6 +15,7 @@ bcrypt = "*"
 requests = "*"
 python-dotenv = "*"
 motor = "*"
+httpx = "*"
 
 [dev-packages]
 mypy = "*"
