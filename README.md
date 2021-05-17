@@ -1,19 +1,13 @@
 # Start server
 
-Pre-requirements
-make
-docker
-docker-compose
+### Pre-requirements:
+- make
+- docker
+- docker-compose
 
-In production
-`sh
-$ make run
-`
-
-Run tests
-`sh
-$ make run-tests
-`
+### Commands:
+- Run `$ make run `
+- Run tests `$ make run-tests`
 
 # Flow
 
