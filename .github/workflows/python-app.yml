@@ -9,13 +9,11 @@ on:
   pull_request:
     branches: [main]
 
-environment:
-  name: api-gdi
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    environment: api-gdi
     env:
       MONGO_DB: ${{ secrets.MONGO_DB }}
       MONGO_HOST: ${{ secrets.MONGO_HOST }}
