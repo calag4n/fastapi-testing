@@ -1,12 +1,13 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app import settings
+from app.settings import MongoSettings
 
+settings = MongoSettings()
 
 client = AsyncIOMotorClient(
-    settings.MONGO_HOST,
-    settings.MONGO_PORT,
-    uuidRepresentation="standard",
+    settings.HOST,
+    settings.PORT,
+    uuidRepresentation='standard',
 )
 
-db = client[settings.MONGO_DB]
+db = client[settings.DB]

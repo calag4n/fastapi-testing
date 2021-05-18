@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from .routers import users
+from app import routers
 
 app = FastAPI()
 
-users.setup(app)
+routers.setup(app)

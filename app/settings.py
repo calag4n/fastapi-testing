@@ -1,5 +1,10 @@
-from app.utils import getenv
+from pydantic import BaseSettings
 
-MONGO_HOST = getenv(str, 'MONGO_HOST')
-MONGO_PORT = getenv(int, 'MONGO_PORT')
-MONGO_DB = getenv(str, 'MONGO_DB')
+
+class MongoSettings(BaseSettings):
+    HOST: str
+    PORT: int
+    DB: str
+
+    class Config:
+        env_prefix = 'MONGO_'

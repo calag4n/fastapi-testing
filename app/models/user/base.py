@@ -1,10 +1,7 @@
 import uuid
-
+from typing import Union
 from pydantic import BaseModel
 
 
 class Base(BaseModel):
-    class Config:
-        json_encoders = {
-            uuid.UUID: str
-        }
+    pass

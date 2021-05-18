@@ -21,10 +21,12 @@ httpx = "*"
 mypy = "*"
 mypyls = {extras = ["default-mypy"], file = "https://github.com/matangover/mypyls/archive/master.zip"}
 pytest = "*"
+pytest-asyncio = "*"
 yapf = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
-server = "python main.py"
+prod = "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+tests = "pytest -svv"
