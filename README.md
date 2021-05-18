@@ -1,23 +1,56 @@
-# Start server
+# FastAPI Testing
+## Pre-requirements:
+- make
+- docker
+- docker-compose
 
-In production
-```sh
-./run.sh
+## Start server
+### Modify environtment variables within docker containers
+To change environtment variables within app container, change **.env** and
+**.env.tests** for tests respectively
+
+### Shell commanhs:
+#### Without docker (all deps should be alread properly installed)
+- Run app
+```bashsh
+make run
+```
+- Run tests
+```
+make run-tests
 ```
 
-Run tests
-```sh
-./run-tests.sh
+#### Docker commands
+- Build an image and run {app|tests}
+```
+make run-docker[-tests]
+```
+- Gracefully stop all containers
+```
+make stop-docker[-tests]
+```
+- Force remove all containers
+```
+make rm-docker[-tests]
+```
+- Hint
+```
+make stop-docker[-tests] \
+make rm-docker[-tests] \
+make run-docker[-tests]
 ```
 
 # Flow
+## Routes:
+### Users
+- Create user `POST /users/`
+- Get all users `GET /users/`
+- Get specific user `GET /users/{user_uid}`
+- Update specific user `PUT /users/{user_uid}`
+- Delete specific user `DELETE /users/{user_uid}`
 
-DB is initialized in `api/controllers/connect.py`
-
-Request is send to `/users`
-
--> `POST` or `GET` function in `api/routers/users.py`
+# Unchaged :)
+DB is initialized in `api/controllers/db.py`
 
 -> request is send to the controller in `api/controllers/users.py`
-
 -> data is _compute_ with model's help and a response is returned

@@ -3,11 +3,15 @@ version: "3.8"
 services:
   app:
     build:
-      dockerfile: Dockerfile
       context: .
+      target: prod
 
-    restart: on-failure
     stop_signal: SIGINT
+
+    command:
+      - pipenv
+      - run
+      - prod  # pipenv script
 
     ports:
       - 8000:8000
@@ -15,13 +19,8 @@ services:
     depends_on:
       - mongo
 
-    environment:
-      - APP_HOST=0.0.0.0
-      - APP_PORT=8000
-      - APP_RELOAD=1
-      - MONGO_HOST=mongo
-      - MONGO_PORT=27017
-      - MONGO_DB=PROD
+    env_file:
+      - .env.prod
 
   mongo:
     image: mongo:4.2-bionic
