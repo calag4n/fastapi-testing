@@ -1,6 +1,5 @@
+from api.settings import MongoSettings
 from motor.motor_asyncio import AsyncIOMotorClient
-
-from app.settings import MongoSettings
 
 settings = MongoSettings()
 

@@ -1,21 +1,15 @@
+import copy
 import random
 import secrets
-import pytest
 import uuid
-import copy
-from typing import List
-from typing import cast
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, cast
 
+import pytest
+from api.controllers.users import collection as users_collection
 from httpx import AsyncClient
 
-from app.controllers.users import collection as users_collection
-
 if TYPE_CHECKING:
-    from app.hints import UserDictMixin
-    from app.hints import UserDictNative
-    from app.hints import UserDictTransmitted
-
+    from api.hints import UserDictMixin, UserDictNative, UserDictTransmitted
 
 _emails = [
     'first@domain.net',
@@ -47,15 +41,11 @@ def get_uuid() -> uuid.UUID:
 
 
 def get_random_users(count: int = 5) -> List['UserDictNative']:
-    return [
-        {
-            'uid': get_uuid(),
-            'email': get_random_email(),
-            'password': get_random_password(),
-        }
-        for _ in range(count)
-    ]
-
+    return [{
+        'uid': get_uuid(),
+        'email': get_random_email(),
+        'password': get_random_password(),
+    } for _ in range(count)]
 
 
 @pytest.fixture
@@ -72,7 +62,6 @@ async def drop_users_collection():
     assert 0 == exinsting_users
 
 
-
 @pytest.fixture(scope='function')
 async def users():
     users: List['UserDictNative'] = get_random_users()
@@ -80,10 +69,7 @@ async def users():
 
     assert len(result.inserted_ids) == len(users)
 
-    yield [
-        user_as_transmitted(user_dict)
-        for user_dict in users
-    ]
+    yield [user_as_transmitted(user_dict) for user_dict in users]
 
 
 @pytest.mark.usefixtures('drop_users_collection')
@@ -137,7 +123,7 @@ async def test_read_user(client: AsyncClient, users: list):
     for user in users:
         user_uid: str = user['uid']
         response = await client.get(f'/users/{user_uid}')
-        response_dict  = response.json()
+        response_dict = response.json()
 
         with pytest.raises(KeyError):
             response_dict['error']
@@ -167,7 +153,7 @@ async def test_update_user(
         user['password'] = get_random_password()
 
         response = await client.put(f'/users/{user_uid}', json=user)
-        response_dict  = response.json()
+        response_dict = response.json()
 
         with pytest.raises(KeyError):
             response_dict['error']
@@ -194,7 +180,7 @@ async def test_delete_user(
         user_uid = user['uid']
 
         response = await client.delete(f'/users/{user_uid}')
-        response_dict  = response.json()
+        response_dict = response.json()
 
         with pytest.raises(KeyError):
             response_dict['error']

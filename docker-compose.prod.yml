@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   app:
@@ -11,10 +11,10 @@ services:
     command:
       - pipenv
       - run
-      - prod  # pipenv script
+      - prod # pipenv script
 
     ports:
-      - 8000:8000
+      - 80:8000
 
     depends_on:
       - mongo
@@ -26,4 +26,4 @@ services:
     image: mongo:4.2-bionic
 
     volumes:
-      - ./mongo_db:/data/db  # To make mongo persistent
+      - ./mongo_db:/data/db # To make mongo persistent

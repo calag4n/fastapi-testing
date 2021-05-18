@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from httpx import AsyncClient
 
-from app.main import app
+from api.main import app
 
 
 @pytest.fixture(scope='function')
@@ -15,4 +15,3 @@ async def client():
 @pytest.fixture(scope='session')
 def event_loop():
     return asyncio.get_event_loop()
-

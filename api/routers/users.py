@@ -10,18 +10,17 @@ from fastapi import status
 from fastapi.responses import JSONResponse
 from pydantic import EmailStr
 
-from app.models import Response
-from app.models import User
-from app.models import UserCreate
-from app.models import UserRead
-from app.models import UserUpdate
-from app.models import UserDelete
-from app.controllers import users as users_controller
+from api.models import Response
+from api.models import User
+from api.models import UserCreate
+from api.models import UserRead
+from api.models import UserUpdate
+from api.models import UserDelete
+from api.controllers import users as users_controller
 
 if TYPE_CHECKING:
-    from app.hints import UserDictNative
-    from app.hints import ResponseDict
-
+    from api.hints import UserDictNative
+    from api.hints import ResponseDict
 
 router = APIRouter(prefix='/users', tags=["users"])
 
@@ -36,24 +35,25 @@ class UsersException(Exception):
         self.error_message = error_message
 
 
-@router.post("/",
+@router.post(
+    "/",
     response_model=Response[User],
     response_description='Create new user',
     response_model_exclude_none=True,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user(user_create: UserCreate) -> 'ResponseDict':
-    created_user: 'UserDictNative' = await users_controller.create_user(user_create)
+    created_user: 'UserDictNative' = await users_controller.create_user(
+        user_create)
 
     if created_user is None:
         raise UsersException(400, 'User has not created')
 
-    return {
-        'result': created_user
-    }
+    return {'result': created_user}
 
 
-@router.get("/",
+@router.get(
+    "/",
     response_model=Response[List[User]],
     response_description='Get all users',
     response_model_exclude_none=True,
@@ -62,42 +62,39 @@ async def read_users() -> 'ResponseDict':
     try:
         result = await users_controller.read_users()
 
-        return {
-            'result': result
-        }
+        return {'result': result}
 
     except Exception as e:
         raise UsersException(500, f'{type(e).__name__}({e})')
 
 
-@router.get("/{user_uid}",
+@router.get(
+    "/{user_uid}",
     response_model=Response[User],
     response_description=(
-        'Retrieve specic user by user uid not mongo _id, but uuid)'
-    ),
+        'Retrieve specic user by user uid not mongo _id, but uuid)'),
     response_model_exclude_none=True,
 )
 async def read_user(user_uid: UUID) -> 'ResponseDict':
     retrieved_user: 'UserDictNative' = await users_controller.read_user(
-            user_uid=user_uid)
+        user_uid=user_uid)
 
     if retrieved_user is None:
         raise UsersException(400, 'User has not been retrieved')
 
-    return {
-        'result': retrieved_user
-    }
+    return {'result': retrieved_user}
 
 
-@router.put("/{user_uid}",
+@router.put(
+    "/{user_uid}",
     response_model=Response[User],
     response_description=(
         'Update specic user by user id not mongo _id, but uuid) '
-        'with email and/or password'
-    ),
+        'with email and/or password'),
     response_model_exclude_none=True,
 )
-async def update_user(user_uid: UUID, user_update: UserUpdate) -> 'ResponseDict':
+async def update_user(user_uid: UUID,
+                      user_update: UserUpdate) -> 'ResponseDict':
     updated_user: 'UserDictNative' = await users_controller.update_user(
         user_uid=user_uid,
         user_update=user_update,
@@ -106,12 +103,11 @@ async def update_user(user_uid: UUID, user_update: UserUpdate) -> 'ResponseDict'
     if updated_user is None:
         raise UsersException(400, 'User has not been updated')
 
-    return {
-        'result': updated_user
-    }
+    return {'result': updated_user}
 
 
-@router.delete("/{user_uid}",
+@router.delete(
+    "/{user_uid}",
     response_model=Response[bool],
     response_description='Delete user by uid',
     response_model_exclude_none=True,

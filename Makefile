@@ -8,7 +8,7 @@ run:
 	MONGO_HOST=localhost \
 MONGO_PORT=27017 \
 MONGO_DB=PROD \
-	pipenv run prod
+	python main.py
 
 run-tests:
 	MONGO_HOST=localhost \
@@ -23,6 +23,9 @@ rm-docker:
 	docker-compose -f docker-compose.prod.yml rm --force
 
 run-docker:
+	docker-compose -f docker-compose.prod.yml up
+
+build-docker:
 	docker-compose -f docker-compose.prod.yml up --build
 
 stop-docker-tests:

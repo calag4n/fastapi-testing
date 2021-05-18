@@ -2,13 +2,13 @@ from uuid import UUID
 from typing import List
 from typing import TYPE_CHECKING
 
-from app.models import User
-from app.models import UserCreate
-from app.models import UserUpdate
-from app.controllers.db import db
+from api.models import User
+from api.models import UserCreate
+from api.models import UserUpdate
+from api.controllers.db import db
 
 if TYPE_CHECKING:
-    from app.hints import UserDictNative
+    from api.hints import UserDictNative
 
 collection = db['users']
 
@@ -17,9 +17,7 @@ async def create_user(user_create: UserCreate) -> 'UserDictNative':
     user = User(**user_create.dict())
 
     result = await collection.insert_one(user.dict())
-    user_dict = await collection.find_one(
-        {'_id': result.inserted_id}
-    )
+    user_dict = await collection.find_one({'_id': result.inserted_id})
 
     return user_dict
 
@@ -36,8 +34,8 @@ async def read_user(user_uid: UUID) -> 'UserDictNative':
     return await collection.find_one({'uid': user_uid})
 
 
-async def update_user(
-        user_uid: UUID, user_update: UserUpdate) -> 'UserDictNative':
+async def update_user(user_uid: UUID,
+                      user_update: UserUpdate) -> 'UserDictNative':
     filter_dict = {'uid': user_uid}
     update_dict = user_update.dict(exclude_none=True)
 
@@ -52,4 +50,3 @@ async def delete_user(user_uid: UUID) -> bool:
     result = await collection.delete_one({'uid': user_uid})
 
     return result.deleted_count == 1
-
