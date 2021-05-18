@@ -9,14 +9,14 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  MONGO_DB: ${{ secrets.MONGO_DB }}
-  MONGO_HOST: ${{ secrets.MONGO_HOST }}
-  MONGO_PORT: ${{ secrets.MONGO_PORT }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+  env:
+    MONGO_DB: ${{ secrets.MONGO_DB }}
+    MONGO_HOST: ${{ secrets.MONGO_HOST }}
+    MONGO_PORT: 27017
 
     steps:
       - uses: actions/checkout@v2
