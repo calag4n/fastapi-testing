@@ -1,9 +1,8 @@
 import asyncio
 
 import pytest
+from api.app import app
 from httpx import AsyncClient
-
-from api.main import app
 
 
 @pytest.fixture(scope='function')
